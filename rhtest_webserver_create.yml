@@ -1,6 +1,6 @@
 ---
 - name: Simple Playbook to create an Azure VM for Webserver
-  hosts: azure 
+  hosts: localhost 
 
   tasks:
   - name: Create virtual machine
