@@ -2,7 +2,7 @@
 - name: Simple Playbook to create an Azure VM for Webserver
   hosts: localhost 
 
-  vars:
+  vars_files:
     - azure_vars.yml
 
   tasks:
