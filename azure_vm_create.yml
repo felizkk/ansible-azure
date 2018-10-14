@@ -16,7 +16,9 @@
       vm_size: Standard_B1s
       admin_username: "{{ azure_ssh_user }}"
       ssh_password_enabled: false
-      ssh_public_keys: "{{ azure_ssh_key }}"
+      ssh_public_keys:
+      - path: "/home/{{ azure_ssh_user }}/.ssh/authorized_keys"
+        key_data: "{{ azure_ssh_key }}"
       started: yes
       image:
         offer: RHEL
