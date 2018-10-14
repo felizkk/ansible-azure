@@ -1,0 +1,4 @@
+LOCK TABLES `member` WRITE;
+INSERT INTO `member` (`firstname`, `surname`, `role`) VALUES ('{{ row_firstname }}','{{ row_surname }}', '{{ row_role }}');
+UNLOCK TABLES;
+
