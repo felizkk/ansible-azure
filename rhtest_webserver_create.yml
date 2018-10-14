@@ -1,6 +1,8 @@
 ---
 - name: Simple Playbook to create an Azure VM for Webserver
-  hosts: localhost 
+  hosts: localhost
+  connection: local
+  gather_facts: no
 
   vars_files:
     - azure_vars.yml
@@ -8,14 +10,16 @@
   tasks:
   - name: Create virtual machine
     azure_rm_virtualmachine:
-      resource_group: rhel75-group
-      name: rhtest1
+      resource_group: "{{ azure_group_name }}"
+      name: "{{ azure_vm_name }}"
       vm_size: Standard_B1s
       admin_username: "{{ azure_ssh_user }}"
-      admin_password: "{{ azure_ssh_key }}"
+      ssh_password: false
+      ssh_public_keys: "{{ azure_ssh_key }}"
       image:
         offer: RHEL
         publisher: RedHat
         sku: 7-RAW
         version: latest
+    delegate_to: localhost
 ...
