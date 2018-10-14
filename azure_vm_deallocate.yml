@@ -1,0 +1,23 @@
+---
+- name: Azure playbook to shut down and deallocate all VMs
+  hosts: "{{ tower_hostgroup_name }}"
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: power off virtual machines
+    azure_rm_virtualmachine:
+      resource_group: "{{ azure_group_name }}"
+      name: "{{ name }}"
+      started: no
+    delegate_to: localhost  
+  
+  - name: deallocate virtual machines
+    azure_rm_virtualmachine:
+      resource_group: "{{ azure_group_name }}"
+      name: "{{ name }}"
+      allocated: no
+    delegate_to: localhost
+...
+
+
