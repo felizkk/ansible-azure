@@ -25,8 +25,8 @@
           priority: 102
           direction: Inbound
     when:
-      - "{{ 'rhtest' in name }}"
-      - "{{ 'rhproxy' in name }}"
+      - "'rhtest' in name"
+      - "'rhproxy' in name"
     delegate_to: localhost
 
   - name: Allow SSH and SQL on rhsql
@@ -48,6 +48,6 @@
           priority: 102
           direction: Inbound
     when:
-      - "{{ 'rhsql' in name }}"
+      - "'rhsql' in name"
     delegate_to: localhost
 ...
