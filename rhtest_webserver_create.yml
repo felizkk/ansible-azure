@@ -2,15 +2,17 @@
 - name: Simple Playbook to create an Azure VM for Webserver
   hosts: localhost 
 
+  vars:
+    - azure_vars.yml
+
   tasks:
   - name: Create virtual machine
     azure_rm_virtualmachine:
       resource_group: rhel75-group
       name: rhtest1
       vm_size: Standard_B1s
-      admin_username: feliz 
-      admin_password: r3dh@t!
-      network_interfaces: azurerhprod1297
+      admin_username: "{{ azure_ssh_user }}"
+      admin_password: "{{ azure_ssh_key }}"
       image:
         offer: RHEL
         publisher: RedHat
