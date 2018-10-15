@@ -1,0 +1,10 @@
+---
+- name: Ping - Display IP Address of Azure Resource Group
+  hosts: "{{ azure_group_name }}"
+  gather_facts: no
+
+  tasks:
+  - ping:
+  - debug:
+      msg: "{{ name }} IP Address is {{ public_ip }}"
+...
