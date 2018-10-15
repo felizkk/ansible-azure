@@ -28,5 +28,5 @@ backend app-servers
     {% for host in groups['rhel75-group'] %}
       {% if 'rhtest' in hostvars[host].name %}
         server server{{loop.index}} {{ hostvars[host].ansible_ssh_host }}:{{ http_port }} cookie {{ hostvars[host].ansible_ssh_host }} check
-      {$ endif %}
+      {% endif %}
     {% endfor %}
