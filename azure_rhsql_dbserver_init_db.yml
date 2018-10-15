@@ -29,6 +29,7 @@
       login_user: ansible
       login_password: redhat
       login_unix_socket: "/var/lib/mysql/mysql.sock"
+      config_file: "/etc/my.cnf"
       state: import
       target: /tmp/init_table.sql
 
