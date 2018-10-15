@@ -1,6 +1,6 @@
 ---
-- name: Ping - Display IP Address of Azure Resource Group
-  hosts: "{{ azure_group_name }}"
+- name: Ping - Display IP Address of Azure Inventory Host Group
+  hosts: "{{ tower_hostgroup_name }}"
   gather_facts: no
 
   tasks:
