@@ -5,7 +5,7 @@
   become_method: sudo
 
   tasks:
-  - name: create a mysql user named ansible
+  - name: create a mysql user named ansible @ %
     mysql_user:
       name: ansible
       password: redhat
@@ -13,7 +13,7 @@
       priv: "*.*:ALL"
       state: present
 
-  - name: create a mysql user named ansible localhost
+  - name: create a mysql user named ansible @ localhost
     mysql_user:
       name: ansible
       password: redhat
