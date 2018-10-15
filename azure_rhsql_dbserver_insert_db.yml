@@ -1,7 +1,9 @@
 ---
 - name: Simple MySQL Insert Table
   hosts: "rhsql*"
-
+  become: yes
+  become_method: sudo
+  
   tasks:
   - name: create an sql file from template
     template:
