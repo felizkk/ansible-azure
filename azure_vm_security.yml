@@ -4,7 +4,7 @@
   gather_facts: no
 
   vars:
-    - http_port: 80
+    - http_port: 8080
 
   tasks:
   - name: Allow SSH and HTTP on rhproxy and rhtest

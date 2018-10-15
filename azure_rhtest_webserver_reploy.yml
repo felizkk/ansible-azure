@@ -5,7 +5,7 @@
   become_method: sudo
 
   vars:
-    - http_port: 80
+    - http_port: 8080
     - apache_max_keep_alive_requests: 115
     - ntpserver: 0.nz.pool.ntp.org
 
