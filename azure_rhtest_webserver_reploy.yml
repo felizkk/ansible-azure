@@ -7,6 +7,7 @@
     - apache_max_keep_alive_requests: 115
     - ntpserver: 0.nz.pool.ntp.org
 
+  tasks:
   - name: install apache (red hat)
     yum:
       name: "{{ item }}"
