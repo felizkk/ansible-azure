@@ -1,6 +1,6 @@
 ---
 - name: Azure Webserver deployment for rhtest
-  hosts: rhtest*
+  hosts: "rhtest*"
 
   vars:
     - http_port: 80
