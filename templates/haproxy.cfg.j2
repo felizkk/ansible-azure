@@ -25,6 +25,8 @@ backend app-servers
     mode http
     balance roundrobin
     option forwardfor
-    {% for host in groups['rhtest'] %}
-      server server{{loop.index}} {{ hostvars[host].ansible_ssh_host }}:{{ http_port }} cookie {{ hostvars[host].ansible_ssh_host }} check
+    {% for host in groups['rhel75-group'] %}
+      {% if 'rhtest' in hostvars[host].name %}
+        server server{{loop.index}} {{ hostvars[host].ansible_ssh_host }}:{{ http_port }} cookie {{ hostvars[host].ansible_ssh_host }} check
+      {$ endif %}
     {% endfor %}
