@@ -28,6 +28,7 @@
       name: theredteam
       login_user: ansible
       login_password: redhat
+      login_unix_socket: "/var/lib/mysql/mysql.sock"
       state: import
       target: /tmp/init_table.sql
 
