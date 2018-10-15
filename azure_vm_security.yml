@@ -28,7 +28,7 @@
           access: Allow
           priority: 102
           direction: Inbound
-    when: "'rhtest' in name" or "'rhproxy' in name"
+    when: ( 'rhtest' in name or 'rhproxy' in name ) 
     delegate_to: localhost
 
   - name: Allow SSH and SQL on rhsql
