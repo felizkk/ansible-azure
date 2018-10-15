@@ -9,7 +9,7 @@
   tasks:
   - name: display hostname
     debug: msg: "Hostname is {{ name }}"
-    
+
   - name: Allow SSH and HTTP on rhproxy and rhtest
     azure_rm_securitygroup:
       resource_group: "{{ resource_group }}"
@@ -27,9 +27,7 @@
           access: Allow
           priority: 102
           direction: Inbound
-    when:
-      - "'rhtest' in name"
-      - "'rhproxy' in name"
+    when: "'rhtest' in name" or "'rhproxy' in name"
     delegate_to: localhost
 
   - name: Allow SSH and SQL on rhsql
@@ -50,7 +48,6 @@
           access: Allow
           priority: 102
           direction: Inbound
-    when:
-      - "'rhsql' in name"
+    when: "'rhsql' in name"
     delegate_to: localhost
 ...
