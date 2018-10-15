@@ -1,0 +1,36 @@
+---
+- name: Azure FrontEnd Server Cleanup
+  hosts: "rhproxy*"
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  
+  vars:
+    - http_port: 80
+
+  tasks:
+  - name: remove haproxy
+    yum:
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - haproxy
+
+  - name: disable http port {{ http_port }}
+    firewalld:
+      port: "{{ http_port }}/tcp"
+      state: disabled
+      permanent: true
+    notify: restart firewall
+
+  - name: remove haproxy config file
+    file:
+      path: /etc/haproxy/haproxy.cfg
+      state: absent
+
+  handlers:
+  - name: restart firewall
+    service:
+      name: firewalld
+      state: restarted          
+...

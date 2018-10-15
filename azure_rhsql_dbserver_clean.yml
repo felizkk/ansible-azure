@@ -1,0 +1,29 @@
+---
+- name: Azure DBServer Cleanup 
+  hosts: "rhsql*"
+  become: yes
+  become_method: sudo
+  gather_facts: no
+
+  tasks:
+  - name: remove mysql server, mysql-python, and ntp
+    yum:
+      name: "{{ item }}"
+      state: absent
+    with_items:
+      - mysql-server
+      - MySQL-python
+
+  - name: disable mysql port 3306
+    firewalld:
+      port: "3306/tcp"
+      state: disabled
+      permanent: true
+    notify: restart firewall
+
+  handlers:
+  - name: restart firewall 
+    service:
+      name: firewalld
+      state: restarted
+...

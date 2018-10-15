@@ -1,0 +1,42 @@
+---
+- name: Azure Webserver cleanup for rhtest
+  hosts: "rhtest*"
+  become: yes
+  become_method: sudo  
+  gather_facts: no
+
+  vars:
+    - http_port: 80
+
+  tasks:
+  - name: remove apache
+    yum:
+      name: httpd
+      state: absent
+
+  - name: remove httpd config file
+    file:
+      path: /etc/httpd/conf/httpd.conf
+      state: absent
+
+  - name: remove html file
+    file:
+      path: "{{ item }}"
+      state: absent
+    with_items:
+      - "/var/www/html/index.html"
+      - "/var/www/html/index.php"
+
+  - name: disable http port {{ http_port }} 
+    firewalld:
+      port: "{{ http_port }}/tcp"
+      state: disabled
+      permanent: true 
+    notify: restart firewall
+
+  handlers:
+  - name: restart firewall
+    service:
+      name: firewalld
+      state: restarted
+...
