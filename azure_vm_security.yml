@@ -7,10 +7,6 @@
     - http_port: 80
 
   tasks:
-  - name: display hostname
-    debug: 
-      msg: "Hostname is {{ name }}"
-
   - name: Allow SSH and HTTP on rhproxy and rhtest
     azure_rm_securitygroup:
       resource_group: "{{ resource_group }}"
