@@ -5,7 +5,7 @@
   become_method: sudo
 
   vars:
-    - http_port: 8080
+    - http_port: 80
     - ntpserver: 0.nz.pool.ntp.org    
 
   tasks:
