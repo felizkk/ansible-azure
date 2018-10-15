@@ -24,7 +24,7 @@
           priority: 100
           direction: Inbound
         - name: Allow HTTP
-          protocol: TCP
+          protocol: Tcp
           source_address_prefix: "{{ tower_public_ip }}/32"
           destination_port_range: "{{ http_port }}"
           access: Allow
@@ -46,7 +46,7 @@
           priority: 100
           direction: Inbound
         - name: Allow HTTP
-          protocol: TCP
+          protocol: Tcp
           source_address_prefix: '10.0.0.0/8'
           destination_port_range: 3306
           access: Allow
