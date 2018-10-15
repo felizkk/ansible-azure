@@ -16,14 +16,14 @@
       resource_group: "{{ resource_group }}"
       name: "{{ security_group }}"
       rules:
-        - name: Allow SSH
+        - name: AllowSSH
           protocol: Tcp
           source_address_prefix: "{{ tower_public_ip }}/32"
           destination_port_range: 22
           access: Allow
           priority: 100
           direction: Inbound
-        - name: Allow HTTP
+        - name: AllowHTTP
           protocol: Tcp
           source_address_prefix: "{{ tower_public_ip }}/32"
           destination_port_range: "{{ http_port }}"
@@ -38,14 +38,14 @@
       resource_group: "{{ resource_group }}"
       name: "{{ security_group }}"
       rules:
-        - name: Allow SSH
+        - name: AllowSSH
           protocol: Tcp
           source_address_prefix: "{{ tower_public_ip }}/32"
           destination_port_range: 22
           access: Allow
           priority: 100
           direction: Inbound
-        - name: Allow HTTP
+        - name: AllowSQL
           protocol: Tcp
           source_address_prefix: '10.0.0.0/8'
           destination_port_range: 3306
