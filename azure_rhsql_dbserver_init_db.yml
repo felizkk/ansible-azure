@@ -13,6 +13,14 @@
       priv: "*.*:ALL"
       state: present
 
+  - name: create a mysql user named ansible localhost
+    mysql_user:
+      name: ansible
+      password: redhat
+      host: "localhost"
+      priv: "*.*:ALL"
+      state: present
+
   - name: create database named theredteam
     mysql_db:
       name: theredteam
