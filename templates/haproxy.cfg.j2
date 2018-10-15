@@ -26,7 +26,7 @@ backend app-servers
     balance roundrobin
     option forwardfor
     {% for host in groups['rhel75-group'] %}
-      {% if 'rhtest' in hostvars[host].name %}
-        server server{{loop.index}} {{ hostvars[host].private_ip }}:{{ http_port }} cookie {{ hostvars[host].private_ip }} check
-      {% endif %}
+    {% if 'rhtest' in hostvars[host].name %}
+      server server{{loop.index}} {{ hostvars[host].private_ip }}:{{ http_port }} cookie {{ hostvars[host].private_ip }} check
+    {% endif %}
     {% endfor %}
