@@ -17,13 +17,15 @@
       name: "{{ security_group }}"
       rules:
         - name: Allow SSH
-          protocol: TCP
+          protocol: Tcp
+          source_address_prefix: "{{ tower_public_ip }}/32"
           destination_port_range: 22
           access: Allow
           priority: 100
           direction: Inbound
         - name: Allow HTTP
           protocol: TCP
+          source_address_prefix: "{{ tower_public_ip }}/32"
           destination_port_range: "{{ http_port }}"
           access: Allow
           priority: 102
@@ -37,7 +39,8 @@
       name: "{{ security_group }}"
       rules:
         - name: Allow SSH
-          protocol: TCP
+          protocol: Tcp
+          source_address_prefix: "{{ tower_public_ip }}/32"
           destination_port_range: 22
           access: Allow
           priority: 100
