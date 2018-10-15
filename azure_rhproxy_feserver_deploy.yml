@@ -1,6 +1,6 @@
 ---
 - name: Azure HA Proxy deployment for rhproxy
-  hosts: "{{ azure_vm_name }}"
+  hosts: "rhproxy*"
   become: yes
   become_method: sudo
 
