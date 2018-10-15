@@ -8,7 +8,8 @@
 
   tasks:
   - name: display hostname
-    debug: msg: "Hostname is {{ name }}"
+    debug: 
+      msg: "Hostname is {{ name }}"
 
   - name: Allow SSH and HTTP on rhproxy and rhtest
     azure_rm_securitygroup:
