@@ -1,0 +1,41 @@
+---
+- name: Simple MySQL Initial Database Creation
+  hosts: "rhsql*"
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: create a mysql user named ansible
+    mysql_user:
+      name: ansible
+      password: redhat
+      host: "%"
+      priv: "*.*:ALL"
+      state: present
+
+  - name: create database named theredteam
+    mysql_db:
+      name: theredteam
+      state: present
+
+  - name: copy sql file to target vm
+    copy:
+      src: templates/init_table.sql
+      dest: /tmp/init_table.sql
+
+  - name: create initial database table and entries
+    mysql_db:
+      name: theredteam
+      login_user: ansible
+      login_password: redhat
+      state: import
+      target: /tmp/init_table.sql
+
+  - name: test table output
+    command: 'mysql -uansible -predhat theredteam -e "select * from member;"'
+    register: tableoutput
+
+  - name: display table output
+    debug:
+      var: tableoutput.stdout_lines
+...
