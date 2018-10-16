@@ -1,0 +1,38 @@
+---
+- name: Download the latest copy of website source codes
+  hosts: tower 
+  gather_facts: no
+
+  tasks:
+  - name: get the latest webpage source from git
+    git:
+      repo: "https://github.com/felizkk/php-website-demo.git"
+      dest: "/tmp/websource"
+
+- name: Deploy new website to Webservers
+  hosts: "{{ azure_vm_name }}"
+  gather_facts: no
+  become: yes
+  become_method: sudo
+
+  tasks:
+  - name: clear html directory
+    file: 
+      path: /var/www/html
+      state: "{{ item }}"
+    with_items:
+      - absent
+      - directory
+
+  # Important Note: to enable Tower to access /tmp, the Job Isolation feature must be disabled
+  # On Tower v3.3.0 : Settings - Jobs - Job Isolation - Off
+  - name: update index php file
+    template:
+      src: "/tmp/websource/website-{{ website_version }}/jinja/index.php.j2"
+      dest: "/var/www/html/index.php"
+
+  - name: copy the rest of html files
+    copy:
+      src: "/tmp/websource/website-{{ website_version }}/static/"
+      dest: /var/www/html/
+...
