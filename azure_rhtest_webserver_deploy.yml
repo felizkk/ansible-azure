@@ -1,6 +1,6 @@
 ---
 - name: Azure Webserver deployment for rhtest
-  hosts: "rhtest*"
+  hosts: "{{ azure_vm_name }}"
   become: yes
   become_method: sudo
 

@@ -10,7 +10,7 @@
       dest: "/tmp/websource"
 
 - name: Deploy new website to Webservers
-  hosts: "{{ webserver_host }}"
+  hosts: "{{ azure_vm_name }}"
   gather_facts: no
   become: yes
   become_method: sudo
