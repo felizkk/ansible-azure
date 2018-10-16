@@ -5,14 +5,14 @@
   gather_facts: no
 
   tasks:
-  - name: power off virtual machines
+  - name: power off virtual machine
     azure_rm_virtualmachine:
       resource_group: "{{ azure_group_name }}"
       name: "{{ azure_vm_name }}"
       started: no
     delegate_to: localhost  
   
-  - name: deallocate virtual machines
+  - name: deallocate virtual machine
     azure_rm_virtualmachine:
       resource_group: "{{ azure_group_name }}"
       name: "{{ azure_vm_name }}"
