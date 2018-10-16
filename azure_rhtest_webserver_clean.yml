@@ -19,13 +19,13 @@
       path: /etc/httpd/conf/httpd.conf
       state: absent
 
-  - name: remove html file
-    file:
-      path: "{{ item }}"
-      state: absent
+  - name: clear html directory
+    file: 
+      path: /var/www/html
+      state: "{{ item }}"
     with_items:
-      - "/var/www/html/index.html"
-      - "/var/www/html/index.php"
+      - absent
+      - directory
 
   - name: disable http port {{ http_port }} 
     firewalld:
