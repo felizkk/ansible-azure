@@ -11,7 +11,7 @@
   #  delegate_to: localhost  
 
   - name: http fetch 1 - get Automation
-    shell: "http GET http://{{ ansible_default_ipv4.address }} -b | grep 'Automation' | head -1 | awk '{print $2}'"
+    shell: "http GET http://{{ public_ip }} -b | grep 'Automation' | head -1 | awk '{print $2}'"
     register: body_automation
     delegate_to: localhost
 
@@ -24,7 +24,7 @@
     delegate_to: localhost
 
   - name: http fecth 2 - get footer
-    shell: "http GET http://{{ ansible_default_ipv4.address }} -b | grep footer | sed -e 's/<footer>/ /g' | sed -e 's/<br/ /g' | awk '{print $1}'"
+    shell: "http GET http://{{ public_ip }} -b | grep footer | sed -e 's/<footer>/ /g' | sed -e 's/<br/ /g' | awk '{print $1}'"
     register: footer_hostname
     delegate_to: localhost
 
