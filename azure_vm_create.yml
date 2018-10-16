@@ -11,8 +11,8 @@
   - name: Create virtual machine
     azure_rm_virtualmachine:
       resource_group: "{{ azure_group_name }}"
-      name: "{{ azure_vm_name }}"
-      short_hostname: "{{ azure_vm_name }}"
+      name: "{{ azure_new_vm_name }}"
+      short_hostname: "{{ azure_new_vm_name }}"
       vm_size: Standard_B1s
       admin_username: "{{ azure_ssh_user }}"
       ssh_password_enabled: false
