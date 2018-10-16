@@ -1,0 +1,10 @@
+---
+- name: Test HTTP Output from Desktop using Firefox
+  hosts: "{{ webserver_host }}" 
+  gather_facts: yes
+
+  tasks:
+  - name: "Calling Firefox. Please see desktop terminal"
+    command: "firefox --new-tab http://{{ public_ip }} --display=:0"
+    delegate_to: rhdesktop.internal.pineview.co.nz
+...
