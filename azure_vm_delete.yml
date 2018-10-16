@@ -1,0 +1,18 @@
+---
+- name: Simple Playbook to Delete an Azure VM for Webserver
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  tasks:
+  - name: Delete virtual machine
+    azure_rm_virtualmachine:
+      resource_group: "{{ azure_group_name }}"
+      name: "{{ azure_vm_name }}"
+      state: absent
+      remove_on_absent:
+        - network_interfaces
+        - virtual_storage
+        - public_ips
+    delegate_to: localhost
+...
