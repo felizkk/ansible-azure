@@ -30,5 +30,5 @@ backend app-servers
       {%- if 'rhtest' in hostvars[host].name %}
       {%- set srvindex = srvindex + 1 %}
       server server{{ srvindex }} {{ hostvars[host].private_ip }}:{{ http_port }} cookie {{ hostvars[host].private_ip }} check
-      {%- endif %}
+      {% endif %}
     {%- endfor %}
