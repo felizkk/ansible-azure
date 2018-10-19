@@ -25,7 +25,7 @@ backend app-servers
     mode http
     balance roundrobin
     option forwardfor
-    {%- set srvindex = 0 %}
+    {% set srvindex = 0 %}
     {%- for host in groups['rhel75-group'] %}
     {%- if 'rhtest' in hostvars[host].name %}
     {%- set srvindex = srvindex + 1 %}
