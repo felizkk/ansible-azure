@@ -27,8 +27,8 @@ backend app-servers
     option forwardfor
     {% set srvindex = 0 %}
     {% for host in groups['rhel75-group'] %}
-      {% if 'rhtest' in hostvars[host].name %}
-        {% set srvindex = srvindex + 1 %}
-        server server{{ srvindex }} {{ hostvars[host].private_ip }}:{{ http_port }} cookie {{ hostvars[host].private_ip }} check
-      {% endif %}
-    {% endfor %}
+      {%- if 'rhtest' in hostvars[host].name %}
+      {%- set srvindex = srvindex + 1 %}
+      server server{{ srvindex }} {{ hostvars[host].private_ip }}:{{ http_port }} cookie {{ hostvars[host].private_ip }} check
+      {%- endif %}
+    {%- endfor %}
