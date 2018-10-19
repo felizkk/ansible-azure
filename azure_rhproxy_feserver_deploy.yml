@@ -34,10 +34,10 @@
     notify: restart firewall
 
   # Config file has been configured to support dynamic inventory rhtest
-  - name: Clear haproxy config file
-    file:
-      path: /etc/haproxy/haproxy.cfg
-      state: absent
+  #- name: Clear haproxy config file
+  #  file:
+  #    path: /etc/haproxy/haproxy.cfg
+  #    state: absent
   - name: Deploy haproxy config
     template:
       src: templates/haproxy.cfg.j2
