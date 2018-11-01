@@ -1,0 +1,31 @@
+---
+- name: Create RHEL VM on Azure
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars_files:
+    - azure_vars.yml
+
+  tasks:
+  - name: Create virtual machine
+    azure_rm_virtualmachine:
+      resource_group: "{{ azure_group_name }}"
+      name: "{{ azure_new_vm_name }}"
+      short_hostname: "{{ azure_new_vm_name }}"
+      vm_size: Standard_B1s
+      admin_username: "{{ azure_ssh_user }}"
+      ssh_password_enabled: false
+      ssh_public_keys:
+      - path: "/home/{{ azure_ssh_user }}/.ssh/authorized_keys"
+        key_data: "{{ azure_ssh_key }}"
+      started: yes
+      os_type: Linux
+      public_ip_allocation_method: Dynamic     
+      image:
+        offer: RHEL
+        publisher: RedHat
+        sku: 7-RAW
+        version: latest
+    delegate_to: localhost
+...
