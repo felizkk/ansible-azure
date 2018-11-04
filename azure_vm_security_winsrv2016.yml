@@ -9,14 +9,14 @@
       resource_group: "{{ resource_group }}"
       name: "{{ security_group }}"
       rules:
-        - name: AllowRDP
+        - name: RDP01
           protocol: Tcp
           source_address_prefix: "{{ tower_public_ip }}/32"
           destination_port_range: 3389
           access: Allow
           priority: 100
           direction: Inbound
-        - name: AllowWinRM
+        - name: WinRM01
           protocol: Tcp
           source_address_prefix: "{{ tower_public_ip }}/32"
           destination_port_range: 5986
