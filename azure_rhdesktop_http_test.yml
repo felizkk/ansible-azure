@@ -6,5 +6,5 @@
   tasks:
   - name: "Calling Firefox. Please see desktop terminal"
     command: "firefox --new-tab http://{{ public_ip }} --display=:0"
-    delegate_to: rhdesktop.internal.pineview.co.nz
+    delegate_to: rhdesktop
 ...
