@@ -16,6 +16,13 @@
   become_method: sudo
 
   tasks:
+  - name: update dns resolve entries on server
+    lineinfile:
+      path: /etc/hosts
+      regexp: dbserver1
+      line: "{{ dbserver_ip_address }} dbserver1"
+      state: present
+
   - name: clear html directory
     file: 
       path: /var/www/html
