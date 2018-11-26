@@ -11,7 +11,7 @@
       name: "{{ item }}"
       state: absent
     with_items:
-      - mysql-server
+      - mariadb-server
       - MySQL-python
 
   - name: disable mysql port 3306
