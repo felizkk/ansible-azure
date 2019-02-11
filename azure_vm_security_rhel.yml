@@ -1,5 +1,5 @@
 ---
-- name: Update Security Port on 3Tier App Servers
+- name: Update Security Port on RHEL 3Tier Servers
   hosts: "{{ tower_hostgroup_name }}"
   gather_facts: no
 
@@ -33,7 +33,7 @@
           access: Allow
           priority: 102
           direction: Inbound
-    when: ( 'rhtest' in name or 'rhproxy' in name ) 
+    when: ( 'webserver' in name or 'haproxy' in name ) 
     delegate_to: localhost
 
   - name: Allow SSH and SQL on rhsql
@@ -55,6 +55,6 @@
           access: Allow
           priority: 102
           direction: Inbound
-    when: "'rhsql' in name"
+    when: "'dbserver' in name"
     delegate_to: localhost
 ...
