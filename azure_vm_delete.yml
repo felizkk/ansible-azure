@@ -1,5 +1,5 @@
 ---
-- name: Simple Playbook to Delete an Azure VM for Webserver
+- name: Simple Playbook to Delete an Azure VM
   hosts: localhost
   connection: local
   gather_facts: no
