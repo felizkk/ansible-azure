@@ -1,7 +1,7 @@
 ---
 - name: Azure playbook to allocate and power on all VMs
   hosts: "{{ tower_hostgroup_name }}"
-  #connection: local
+  connection: local
   gather_facts: no
 
   tasks:
