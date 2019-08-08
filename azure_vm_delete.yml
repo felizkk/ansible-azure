@@ -8,7 +8,7 @@
   - name: Delete virtual machine
     azure_rm_virtualmachine:
       resource_group: "{{ azure_group_name }}"
-      name: "{{ azure_vm_name }}"
+      name: "{{ target_host_name }}"
       state: absent
       remove_on_absent: all
     delegate_to: localhost
