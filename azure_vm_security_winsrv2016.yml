@@ -22,6 +22,13 @@
           destination_port_range: 5986
           access: Allow
           priority: 101
-          direction: Inbound           
+          direction: Inbound
+        - name: Kerberos
+          protocol: Udp
+          source_address_prefix: "{{ tower_public_ip }}/32"
+          destination_port_range: 88
+          access: Allow
+          priority: 102
+          direction: Inbound
     delegate_to: localhost
 ...
