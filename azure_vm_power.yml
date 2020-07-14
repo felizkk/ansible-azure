@@ -11,13 +11,13 @@
       resource_group: "{{ azure_group_name }}"
       # name is an inventory host varilable taken from the hostgroup
       name: "{{ name }}"
-      allocated: "{{ power_state }}"
+      allocated: "{{ new_power_state }}"
     delegate_to: localhost
 
   - name: power on / off virtual machines
     azure_rm_virtualmachine:
       resource_group: "{{ azure_group_name }}"
       name: "{{ name }}"
-      started: "{{ power_state }}"
+      started: "{{ new_power_state }}"
     delegate_to: localhost  
 ...
