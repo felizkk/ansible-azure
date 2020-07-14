@@ -1,0 +1,23 @@
+---
+- name: Azure playbook to allocate and power on all VMs
+  hosts: "{{ azure_group_name }}"
+  connection: local
+  gather_facts: no
+
+  # Make sure tower hostgroup (dynamic) is the same with azure resource group
+  tasks:
+  - name: allocate / de-allocate virtual machines
+    azure_rm_virtualmachine:
+      resource_group: "{{ azure_group_name }}"
+      # name is an inventory host varilable taken from the hostgroup
+      name: "{{ name }}"
+      allocated: "{{ power_state }}"
+    delegate_to: localhost
+
+  - name: power on / off virtual machines
+    azure_rm_virtualmachine:
+      resource_group: "{{ azure_group_name }}"
+      name: "{{ name }}"
+      started: "{{ power_state }}"
+    delegate_to: localhost  
+...
