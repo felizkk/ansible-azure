@@ -11,7 +11,7 @@
       rules:
         - name: RDP01
           protocol: Tcp
-          source_address_prefix: "{{ tower_public_ip }}/32"
+          source_address_prefix: "{{ terminal_public_ip }}/32"
           destination_port_range: 3389
           access: Allow
           priority: 100
