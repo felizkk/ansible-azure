@@ -38,8 +38,11 @@
         offer: fortinet_fortigate-vm_v5
         publisher: fortinet
         sku: fortinet_fg-vm
-        version: latest
+        version: "{{ fortigate_version }}"
       # some Azure images require plan information  
-      plan: "{% if item.value.image.plan is not defined %}{{ omit }}{% else %}{'name': '{{ item.value.image.sku }}','publisher': '{{ item.value.image.publisher }}','product': '{{ item.value.image.offer }}'}{% endif %}"
+      plan:
+        name: fortinet_fg-vm
+        product: fortinet_fortigate-vm_v5
+        publisher: fortinet
     delegate_to: localhost
 ...
