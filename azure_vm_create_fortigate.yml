@@ -1,0 +1,43 @@
+---
+- name: Create FortiGate VM on Azure
+  hosts: localhost
+  connection: local
+  gather_facts: no
+
+  # Example values 
+  # resource_group: fortinet-group
+  # name: fortigate-02
+  # short_hostname: fortigate-02
+  # vm_size: Standard_B1s
+  # admin_username: fortiadmin
+  # admin_password: foobar
+  # ssh_password_enabled: yes
+  # username and passwod see in azure_vars
+  # offer: fortinet_fortigate-vm_v5
+  # publisher: fortinet
+  # sku: fortinet_fg-vm
+  # version: latest
+
+  vars_files:
+    - azure_vars.yml
+
+  tasks:
+  - name: Create virtual machine
+    azure_rm_virtualmachine:
+      resource_group: "{{ azure_group_name }}"
+      name: "{{ target_host_name }}"
+      short_hostname: "{{ target_host_name }}"
+      vm_size: "{{ vm_size }}"
+      admin_username: "{{ fortigate_admin }}"
+      admin_password: "{{ fortigate_password }}"
+      ssh_password_enabled: false
+      started: yes
+      os_type: Linux
+      public_ip_allocation_method: Dynamic     
+      image:
+        offer: fortinet_fortigate-vm_v5
+        publisher: fortinet
+        sku: fortinet_fg-vm
+        version: latest
+    delegate_to: localhost
+...
