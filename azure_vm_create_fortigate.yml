@@ -39,5 +39,13 @@
         publisher: fortinet
         sku: fortinet_fg-vm
         version: latest
+      # some Azure images require plan information  
+      plan: |
+        {%- if item.value.image.plan is not defined -%}{{ omit }}{%- else -%}
+          {'name': '{{ item.value.image.sku }}',
+           'publisher': '{{ item.value.image.publisher }}',
+           'product': '{{ item.value.image.offer }}'
+          }
+        {%- endif -%}
     delegate_to: localhost
 ...
