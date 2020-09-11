@@ -30,7 +30,7 @@
       vm_size: "{{ vm_size }}"
       admin_username: "{{ fortigate_admin }}"
       admin_password: "{{ fortigate_password }}"
-      ssh_password_enabled: false
+      ssh_password_enabled: true
       started: yes
       os_type: Linux
       public_ip_allocation_method: Dynamic     
