@@ -7,11 +7,11 @@
   vars_files:
     - azure_vars.yml
     - vm_size: Standard_B1s
-    - offer: RHEL
-    - publisher: RedHat
-    - sku: 7-RAW
-    - version: latest
-  
+    - offer: UbuntuServer
+    - publisher: Canonical
+    - sku: 18.04-LTS
+    - version: latest  
+
   tasks:
   - name: Create virtual machine
     azure_rm_virtualmachine:
