@@ -1,23 +1,26 @@
 ---
-- name: Create RHEL VM on Azure
+- name: Create Ubuntu VM on Azure
   hosts: localhost
   connection: local
   gather_facts: no
 
   vars_files:
     - azure_vars.yml
+  vars:
+    - azure_group_name: ubuntu-group
+    - azure_new_vm_name: ubuntu-server-01  
     - vm_size: Standard_B1s
     - offer: UbuntuServer
     - publisher: Canonical
     - sku: 18.04-LTS
-    - version: latest  
+    - version: latest
 
   tasks:
   - name: Create virtual machine
     azure_rm_virtualmachine:
       resource_group: "{{ azure_group_name }}"
-      name: "{{ target_host_name }}"
-      short_hostname: "{{ target_host_name }}"
+      name: "{{ azure_new_vm_name }}"
+      short_hostname: "{{ azure_new_vm_name }}"
       vm_size: "{{ vm_size }}"
       admin_username: "{{ azure_ssh_user }}"
       ssh_password_enabled: false

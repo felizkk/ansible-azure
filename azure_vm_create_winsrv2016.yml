@@ -1,8 +1,19 @@
 ---
-- name: Create Windows Server 2016 DC (B1S) VM on Azure 
+- name: Create Windows Server VM on Azure 
   hosts: localhost
   connection: local
   gather_facts: no
+
+  vars:
+    - azure_group_name: winserver-group
+    - azure_new_vm_name: winserver-01
+    - vm_size: WindowsServer
+    - offer: WindowsServer
+    - publisher: MicrosoftWindowsServer
+    - sku: 2016-Datacenter
+    - version: latest
+    - azure_windows_user: "Administrator"
+    - azure_windows_password: "r3dh@t!"
 
   tasks:
   - name: Create virtual machine
@@ -10,16 +21,16 @@
       resource_group: "{{ azure_group_name }}"
       name: "{{ azure_new_vm_name }}"
       short_hostname: "{{ azure_new_vm_name }}"
-      vm_size: Standard_B1s
+      vm_size: "{{ vm_size }}"
       admin_username: "{{ azure_windows_user }}"
       admin_password: "{{ azure_windows_password }}"
       started: yes
       os_type: Windows
       public_ip_allocation_method: Dynamic
       image:
-        offer: WindowsServer
-        publisher: MicrosoftWindowsServer
-        sku: 2016-Datacenter
-        version: latest
+        offer: "{{ offer }}"
+        publisher: "{{ publisher }}"
+        sku: "{{ sku }}"
+        version: "{{ version }}"
     delegate_to: localhost
 ...
