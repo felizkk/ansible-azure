@@ -20,6 +20,16 @@
 
   vars_files:
     - azure_vars.yml
+  vars:
+    - azure_group_name: fortinet-group
+    - azure_new_vm_name: fortigate-00
+    - vm_size: Standard_B1s
+    - offer: fortinet_fortigate-vm_v5
+    - publisher: fortinet
+    - sku: fortinet_fg-vm
+    - version: "6.4.2"
+    - fortigate_admin: "azureforti"
+    - fortigate_password: "r3dh@t!"
 
   tasks:
   - name: Create virtual machine
@@ -35,14 +45,14 @@
       os_type: Linux
       public_ip_allocation_method: Dynamic     
       image:
-        offer: fortinet_fortigate-vm_v5
-        publisher: fortinet
-        sku: fortinet_fg-vm
-        version: "{{ fortigate_version }}"
-      # some Azure images require plan information  
+        offer: "{{ offer }}"
+        publisher: "{{ publisher }}"
+        sku: "{{ sku }}"
+        version: "{{ version }}"
+      # Azure fortinet images require plan description  
       plan:
-        name: fortinet_fg-vm
-        product: fortinet_fortigate-vm_v5
-        publisher: fortinet
+        name: "{{ sku }}"
+        product: "{{ offer }}"
+        publisher: "{{ publisher }}"
     delegate_to: localhost
 ...
