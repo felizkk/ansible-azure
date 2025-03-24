@@ -1,3 +1,5 @@
 .vscode
 contrib/*
 azure_secrets.yaml
+azure-ee/context/*
+azure-ee/context
