@@ -1,0 +1,32 @@
+---
+- name: Ensure Private NIC is Present
+  azure.azcollection.azure_rm_networkinterface:
+    name: "{{ vm_name }}_nic01"
+    resource_group: "{{ subnet_rg_name }}"
+    virtual_network: "{{ subnet_vnet_name }}"
+    subnet_name: "{{ subnet_name }}"
+    create_with_security_group: false
+    ip_configurations:
+      - name: "{{ vm_name }}_nic01_ipconfig1"
+        primary: true
+        private_ip_allocation_method: Dynamic
+
+- name: Ensure Virtual Machine is Present
+  azure.azcollection.azure_rm_virtualmachine:
+    resource_group: "{{ vm_rg_name }}"
+    name: "{{ vm_name }}"
+    admin_username: "{{ vm_username }}"
+    admin_password: "{{ vm_password }}"
+    vm_size: "{{ vm_size }}"
+    network_interfaces: "{{ vm_name }}_nic01"
+    state: present
+    os_type: Linux
+    image:
+      offer: RHEL
+      publisher: RedHat
+      sku: '9_5'
+      version: latest
+    os_disk_size_gb: 64
+    os_disk_name: "{{ vm_name }}_osdisk"
+    managed_disk_type: Standard_LRS
+    tags: "{{ vm_tags }}"

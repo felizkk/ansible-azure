@@ -1,0 +1,27 @@
+---
+- name: Provision Resource Group
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    demo_rg_name: aap_demo_rg
+    demo_vnet_name: aap_demo_vnet
+    demo_vm_list:
+      - { vm_name: aap-demo-vm1, subnet_name: aap_demo_subnet1 }
+      - { vm_name: aap-demo-vm2, subnet_name: aap_demo_subnet2 }
+    demo_tags:
+      demo: aap
+      guid: zn56b
+
+  tasks:
+    - name: Process VM List
+      ansible.builtin.include_role:
+        name: virtualmachine
+      vars:
+        subnet_rg_name: "{{ demo_rg_name }}"
+        subnet_vnet_name: "{{ demo_vnet_name }}"
+        vm_rg_name: "{{ demo_rg_name }}"
+        vm_name: "{{ item.vm_name }}"
+        subnet_name: "{{ item.subnet_name }}"
+        vm_tags: "{{ demo_tags }}"
+      loop: "{{ demo_vm_list }}"

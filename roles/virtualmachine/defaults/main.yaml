@@ -1,0 +1,12 @@
+---
+subnet_rg_name: my_aap_rg
+subnet_vnet_name: my_aap_vnet
+subnet_name: my_aap_subnet
+vm_rg_name: my_aap_rg
+vm_name: my-aap-vm
+vm_size: Standard_B1s
+vm_username: demoadmin
+vm_password: changeme
+vm_tags:
+  mytag1: value1
+  mytag2: value2
