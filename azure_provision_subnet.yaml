@@ -19,5 +19,5 @@
         subnet_rg_name: "{{ demo_rg_name }}"
         subnet_vnet_name: "{{ demo_vnet_name }}"
         subnet_name: "{{ item.name }}"
-        subnet_address_prefixes_cidr: "{{ item.prefix }}"
+        subnet_address_prefix_cidr: "{{ item.prefix }}"
       loop: "{{ demo_subnet_list }}"
