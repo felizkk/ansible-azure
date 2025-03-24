@@ -1,0 +1,23 @@
+---
+- name: Provision Resource Group
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    demo_rg_name: aap_demo_rg
+    demo_vnet_name: aap_demo_vnet
+    demo_subnet_list:
+      - { name: aap_demo_subnet1, prefix: 10.0.1.0/24 }
+      - { name: aap_demo_subnet2, prefix: 10.0.2.0/24 }
+      - { name: aap_demo_subnet3, prefix: 10.0.3.0/24 }
+
+  tasks:
+    - name: Process Subnet List
+      ansible.builtin.include_role:
+        name: subnet
+      vars:
+        subnet_rg_name: "{{ demo_rg_name }}"
+        subnet_vnet_name: "{{ demo_vnet_name }}"
+        subnet_name: "{{ item.name }}"
+        subnet_address_prefixes_cidr: "{{ item.prefix }}"
+      loop: "{{ demo_subnet_list }}"

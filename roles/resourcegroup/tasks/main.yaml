@@ -1,0 +1,7 @@
+---
+- name: Ensure Resource Group is Present
+  azure.azcollection.azure_rm_resourcegroup:
+    auth_source: env
+    name: "{{ rg_name }}"
+    location: "{{ rg_location }}"
+    tags: "{{ rg_tags }}"

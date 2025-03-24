@@ -1,0 +1,11 @@
+---
+# Example default value
+vnet_rg_name: my_aap_rg
+vnet_name: my_aap_vnet
+vnet_address_prefixes_cidr:
+  - 10.0.0.0/16
+vnet_dns_servers:
+  - 168.63.129.16
+vnet_tags:
+  mytag1: value1
+  mytag2: value2

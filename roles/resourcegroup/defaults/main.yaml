@@ -1,0 +1,7 @@
+---
+# Example default value
+rg_name: my_aap_rg
+rg_location: eastus
+rg_tags:
+  mytag1: value1
+  mytag2: value2

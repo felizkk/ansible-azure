@@ -1,0 +1,5 @@
+---
+subnet_rg_name: my_aap_rg
+subnet_vnet_name: my_aap_vnet
+subnet_name: my_aap_subnet
+subnet_address_prefix_cidr: "10.0.1.0/24"

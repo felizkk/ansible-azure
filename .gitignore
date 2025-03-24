@@ -1,2 +1,3 @@
 .vscode
+contrib/*
 azure_secrets.yaml

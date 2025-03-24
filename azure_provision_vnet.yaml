@@ -1,0 +1,24 @@
+---
+- name: Provision Resource Group
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    demo_rg_name: aap_demo_rg
+    demo_vnet_name: aap_demo_vnet
+    demo_vnet_address_prefixes_cidr:
+      - 10.0.0.0/16
+    demo_vnet_dns_servers:
+      - 168.63.129.16
+    demo_tags:
+      demo: aap
+      guid: zn56b
+
+  roles:
+    - role: virtualnetwork
+      vars:
+        vnet_rg_name: "{{ demo_rg_name }}"
+        vnet_name: "{{ demo_vnet_name }}"
+        vnet_address_prefixes_cidr: "{{ demo_vnet_address_prefixes_cidr }}"
+        vnet_dns_servers: "{{ demo_vnet_dns_servers }}"
+        vnet_tags: "{{ demo_tags }}"
