@@ -24,7 +24,11 @@ You will need to create AAP (2.5) resources:
 
 Create Execution Environment (EE)
 
-Push EE to Automation Hub
+See azure-ee folder for example.
+
+Push EE to Automation Hub.
+
+For AAP2.5, the user must be configured with the galaxy content admin role first.
 
 ## Azure CLI Setup ##
 

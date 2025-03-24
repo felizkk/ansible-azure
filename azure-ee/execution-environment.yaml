@@ -1,10 +1,28 @@
-version: 1
+---
+version: 3
 
-ansible_config: 'ansible.cfg'
+images:
+  base_image:
+    name: registry.redhat.io/ansible-automation-platform-24/ee-minimal-rhel9:latest
 
-build_arg_defaults:
-  EE_BASE_IMAGE: 'registry.redhat.io/ansible-automation-platform-24/ee-minimal-rhel8:latest'
+options:
+  package_manager_path: /usr/bin/microdnf
 
 dependencies:
-  galaxy: requirements.yaml
+  galaxy: requirements.yml
   python: requirements.txt
+  system: bindep.txt
+
+# If specif ansible.cfg is needed
+  additional_build_files:
+    - src: files/ansible.cfg
+      dest: configs
+
+additional_build_steps:
+  prepend_galaxy:
+    - RUN pip3 install --upgrade pip setuptools
+    - RUN whoami
+    - RUN cat /etc/os-release
+    # - COPY _build/configs/ansible.cfg /etc/ansible/ansible.cfg
+  append_galaxy:
+    - RUN echo Build done!
