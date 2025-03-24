@@ -22,13 +22,22 @@ You will need to create AAP (2.5) resources:
 - Sync galaxy community for azure.azcollection
 - Ensure AAP Org points to Galaxy 
 
-Create Execution Environment (EE)
-
+Create Execution Environment (EE).  
 See azure-ee folder for example.
 
-Push EE to Automation Hub.
+```bash
+$ podman login registry.redhat.io
+$ ansible-builder build -v3 -t localhost/azure-ee:v1
+```
 
-For AAP2.5, the user must be configured with the galaxy content admin role first.
+Push EE to Automation Hub.  
+For AAP2.5, the login user must be configured with the galaxy content admin role first.
+
+```bash
+$ podman tag localhost/azure-ee:v1 myaap25hub.example.com/azure-ee:v1
+$ podman login myaap25hub.example.com --tls-verify=False
+$ podman push myaap25hub.example.com/azure-ee:v1 --tls-verify=False
+```
 
 ## Azure CLI Setup ##
 
