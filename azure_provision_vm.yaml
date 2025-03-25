@@ -11,8 +11,8 @@
       - { vm_name: aap-demo-vm2, subnet_name: aap_demo_subnet2, vm_size: Standard_B1s, vm_os_disk_size_gb: 64 }
       - { vm_name: aap-demo-vm3, subnet_name: aap_demo_subnet3, vm_size: Standard_B1s, vm_os_disk_size_gb: 64 }
     demo_vm_state: present
-    vm_username: demoadmin
-    vm_password: changeme
+    demo_vm_username: demoadmin
+    demo_vm_password: changeme
     demo_tags:
       demo: aap
       guid: zn56b

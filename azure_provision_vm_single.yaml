@@ -11,8 +11,8 @@
     demo_vm_size: Standard_B1s
     dmeo_vm_os_disk_size_gb: 64
     demo_vm_state: present
-    vm_username: demoadmin
-    vm_password: changeme
+    demo_vm_username: demoadmin
+    demo_vm_password: changeme
     demo_tags:
       demo: aap
       guid: zn56b
