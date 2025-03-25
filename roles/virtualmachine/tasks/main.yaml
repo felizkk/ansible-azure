@@ -12,7 +12,7 @@
         private_ip_allocation_method: Dynamic
     # on deletion, vm needs to be deleted first
     # state: "{{ vm_state }}"
-  when: state != "absent"
+  when: vm_state != "absent"
 
 - name: Provision or Modify Virtual Machine State - {{ vm_name }}
   azure.azcollection.azure_rm_virtualmachine:
