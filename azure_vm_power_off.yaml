@@ -1,0 +1,23 @@
+---
+- name: Power Off VMs
+  hosts: all
+  gather_facts: no
+
+  vars:
+    demo_rg_name: aap_demo_rg
+
+  tasks:
+  - name: De-allocate Virtual Machines
+    azure_rm_virtualmachine:
+      resource_group: "{{ demo_rg_name }}"
+      # name is an inventory host variable taken from the hostgroup
+      name: "{{ name }}"
+      allocated: false
+    delegate_to: localhost
+
+  - name: Power off Virtual Machines
+    azure_rm_virtualmachine:
+      resource_group: "{{ demo_rg_name }}"
+      name: "{{ name }}"
+      started: false
+    delegate_to: localhost
