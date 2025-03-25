@@ -7,8 +7,10 @@
     demo_rg_name: aap_demo_rg
     demo_vnet_name: aap_demo_vnet
     demo_vm_list:
-      - { vm_name: aap-demo-vm1, subnet_name: aap_demo_subnet1 }
-      - { vm_name: aap-demo-vm2, subnet_name: aap_demo_subnet2 }
+      - { vm_name: aap-demo-vm1, subnet_name: aap_demo_subnet1, vm_size: Standard_B1s, vm_os_disk_size_gb: 64 }
+      - { vm_name: aap-demo-vm2, subnet_name: aap_demo_subnet2, vm_size: Standard_B1s, vm_os_disk_size_gb: 64 }
+      - { vm_name: aap-demo-vm3, subnet_name: aap_demo_subnet3, vm_size: Standard_B1s, vm_os_disk_size_gb: 64 }
+    demo_vm_state: present
     demo_tags:
       demo: aap
       guid: zn56b
@@ -23,5 +25,8 @@
         vm_rg_name: "{{ demo_rg_name }}"
         vm_name: "{{ item.vm_name }}"
         subnet_name: "{{ item.subnet_name }}"
+        vm_state: "{{ demo_vm_state }}"
+        vm_size: "{{ item.vm_size }}"
+        vm_os_disk_size_gb: "{{ item.vm_os_disk_size_gb }}"
         vm_tags: "{{ demo_tags }}"
       loop: "{{ demo_vm_list }}"

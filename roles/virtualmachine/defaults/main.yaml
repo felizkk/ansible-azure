@@ -5,8 +5,10 @@ subnet_name: my_aap_subnet
 vm_rg_name: my_aap_rg
 vm_name: my-aap-vm
 vm_size: Standard_B1s
+vm_os_disk_size_gb: 64
 vm_username: demoadmin
 vm_password: changeme
+vm_state: present
 vm_tags:
   mytag1: value1
   mytag2: value2
