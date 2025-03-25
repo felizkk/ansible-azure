@@ -10,6 +10,7 @@
       - name: "{{ vm_name }}_nic01_ipconfig1"
         primary: true
         private_ip_allocation_method: Dynamic
+        public_ip_address_name: "{{ vm_name }}_public_ip"
     # on deletion, vm needs to be deleted first
     # state: "{{ vm_state }}"
   when: vm_state != "absent"
