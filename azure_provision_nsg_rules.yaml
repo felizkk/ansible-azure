@@ -1,0 +1,64 @@
+---
+- name: Provision Subnet
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    demo_rg_name: rg-aap-demo
+    # demo_subnet_list:
+    #   - { name: snet-aap-demo-cli, vnet_name: vnet-aap-demo-cli, prefix: 172.16.132.0/24 }
+    #   - { name: snet-aap-demo-1, vnet_name: vnet-aap-demo, prefix: 172.16.134.0/24 }
+    #   - { name: snet-aap-demo-2, vnet_name: vnet-aap-demo, prefix: 172.16.135.0/24 }
+    # Client source public IP for access
+    demo_office_ip: 121.74.11.91/32
+
+  tasks:
+    - name: Create NSG Rules for snet-aap-demo-cli
+      azure.azcollection.azure_rm_securitygroup:
+        resource_group: "{{ demo_rg_name }}"
+        name: "nsg-snet-aap-demo-cli"
+        # not to remove rules not matching those defined in rules
+        purge_rules: false
+        rules:
+          # Inbound Rules
+          - name: Allow-SSH-Office
+            description: Allow SSH Inbound from Office
+            direction: Inbound
+            priority: 1001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: 121.74.11.91/32
+            destination_port_range: 22
+            destination_address_prefix: 172.16.132.0/24
+            access: Allow
+          # Outbound Rules
+          - name: Allow-SSH-Demo
+            description: Allow SSH Outbound to Demo VNET
+            direction: Outbound
+            priority: 1001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: 172.16.132.0/24
+            destination_port_range: 22
+            destination_address_prefix: 172.16.134.0/24
+            access: Allow
+
+    - name: Create NSG Rules for snet-aap-demo-1
+      azure.azcollection.azure_rm_securitygroup:
+        resource_group: "{{ demo_rg_name }}"
+        name: "nsg-snet-aap-demo-1"
+        # not to remove rules not matching those defined in rules
+        purge_rules: false
+        rules:
+          # Inbound Rules
+          - name: Allow-SSH-CLI
+            description: Allow SSH Inbound from CLI Jumphost
+            direction: Inbound
+            priority: 1001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: 172.16.132.0/24
+            destination_port_range: 22
+            destination_address_prefix: 172.16.134.0/24
+            access: Allow
+          # Outbound Rules
