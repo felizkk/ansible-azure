@@ -1,5 +1,5 @@
 ---
-- name: Provision Resource Group
+- name: Provision Virtual Network
   hosts: localhost
   gather_facts: false
 
@@ -33,3 +33,25 @@
         vnet_state: "{{ demo_vnet_state }}"
         vnet_tags: "{{ demo_tags }}"
       loop: "{{ demo_vnet_list }}"
+
+    - name: Create VNET Peering (A)
+      azure.azcollection.azure_rm_virtualnetworkpeering:
+        resource_group: "{{ demo_rg_name }}"
+        virtual_network: vnet-aap-demo-cli
+        name: vnet-aap-demo-cli-to-vnet-aap-demo
+        remote_virtual_network:
+          resource_group: "{{ demo_rg_name }}"
+          name: vnet-aap-demo
+        allow_virtual_network_access: true
+        allow_forwarded_traffic: true
+
+    - name: Create VNET Peering (B)
+      azure.azcollection.azure_rm_virtualnetworkpeering:
+        resource_group: "{{ demo_rg_name }}"
+        virtual_network: vnet-aap-demo
+        name: vnet-aap-demo-to-vnet-aap-demo-cli
+        remote_virtual_network:
+          resource_group: "{{ demo_rg_name }}"
+          name: vnet-aap-demo-cli
+        allow_virtual_network_access: true
+        allow_forwarded_traffic: true

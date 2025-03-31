@@ -1,5 +1,5 @@
 ---
-- name: Provision Resource Group
+- name: Provision Virtual Machine
   hosts: localhost
   gather_facts: false
 
