@@ -1,8 +1,9 @@
 ---
-- name: Ensure Virtual Network is Present
+- name: Ensure Virtual Network is Present - {{ vnet_name }}
   azure.azcollection.azure_rm_virtualnetwork:
     resource_group: "{{ vnet_rg_name }}"
     name: "{{ vnet_name }}"
     address_prefixes_cidr: "{{ vnet_address_prefixes_cidr }}"
-    dns_servers: "{{ vnet_dns_servers }}"
+    dns_servers: "{{ vnet_dns_servers | default(omit) }}"
+    state: "{{ vnet_state }}"
     tags: "{{ vnet_tags }}"

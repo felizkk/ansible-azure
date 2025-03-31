@@ -5,3 +5,4 @@
     name: "{{ rg_name }}"
     location: "{{ rg_location }}"
     tags: "{{ rg_tags }}"
+    state: "{{ rg_state }}"

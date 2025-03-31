@@ -4,8 +4,9 @@
   gather_facts: false
 
   vars:
-    demo_rg_name: aap_demo_rg
+    demo_rg_name: rg-aap-demo
     demo_rg_location: eastus
+    demo_rg_state: present
     demo_tags:
       demo: aap
       guid: zn56b
@@ -16,3 +17,4 @@
         rg_name: "{{ demo_rg_name }}"
         rg_location: "{{ demo_rg_location }}"
         rg_tags: "{{ demo_tags }}"
+        rg_state: "{{ demo_rg_state }}"

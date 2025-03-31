@@ -4,21 +4,32 @@
   gather_facts: false
 
   vars:
-    demo_rg_name: aap_demo_rg
-    demo_vnet_name: aap_demo_vnet
-    demo_vnet_address_prefixes_cidr:
-      - 10.0.0.0/16
-    demo_vnet_dns_servers:
-      - 168.63.129.16
+    demo_rg_name: rg-aap-demo
+    demo_vnet_state: present
+    demo_vnet_list:
+      - vnet_name: vnet-aap-demo-cli
+        vnet_address_prefixes_cidr:
+          - 172.16.132.0/23
+        # vnet_dns_servers:
+        #   - 168.63.129.16
+      - vnet_name: vnet-aap-demo
+        vnet_address_prefixes_cidr:
+          - 172.16.134.0/23
+        vnet_dns_servers:
+          - 168.63.129.16
     demo_tags:
       demo: aap
       guid: zn56b
 
-  roles:
-    - role: virtualnetwork
+  tasks:
+    - name: Process VNET List
+      ansible.builtin.include_role:
+        name: virtualnetwork
       vars:
         vnet_rg_name: "{{ demo_rg_name }}"
-        vnet_name: "{{ demo_vnet_name }}"
-        vnet_address_prefixes_cidr: "{{ demo_vnet_address_prefixes_cidr }}"
-        vnet_dns_servers: "{{ demo_vnet_dns_servers }}"
+        vnet_name: "{{ item.vnet_name }}"
+        vnet_address_prefixes_cidr: "{{ item.vnet_address_prefixes_cidr }}"
+        vnet_dns_servers: "{{ item.vnet_dns_servers | default(omit) }}"
+        vnet_state: "{{ demo_vnet_state }}"
         vnet_tags: "{{ demo_tags }}"
+      loop: "{{ demo_vnet_list }}"

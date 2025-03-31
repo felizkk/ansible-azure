@@ -4,12 +4,11 @@
   gather_facts: false
 
   vars:
-    demo_rg_name: aap_demo_rg
-    demo_vnet_name: aap_demo_vnet
+    demo_rg_name: rg-aap-demo
     demo_vm_list:
-      - { vm_name: aap-demo-vm1, subnet_name: aap_demo_subnet1, vm_size: Standard_B1s, vm_os_disk_size_gb: 64 }
-      - { vm_name: aap-demo-vm2, subnet_name: aap_demo_subnet2, vm_size: Standard_B1s, vm_os_disk_size_gb: 64 }
-      - { vm_name: aap-demo-vm3, subnet_name: aap_demo_subnet3, vm_size: Standard_B1s, vm_os_disk_size_gb: 64 }
+      - { vm_name: vm-aap-demo-1, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-1, vm_size: Standard_B1s, vm_os_disk_size_gb: 128 }
+      - { vm_name: vm-aap-demo-2, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-2, vm_size: Standard_B1s, vm_os_disk_size_gb: 64 }
+      - { vm_name: vm-aap-demo-cli, vnet_name: vnet-aap-demo-cli, subnet_name: snet-aap-demo-cli, vm_size: Standard_B1s, vm_os_disk_size_gb: 128 }
     demo_vm_state: present
     demo_vm_username: demoadmin
     demo_vm_password: changeme
@@ -23,7 +22,7 @@
         name: virtualmachine
       vars:
         subnet_rg_name: "{{ demo_rg_name }}"
-        subnet_vnet_name: "{{ demo_vnet_name }}"
+        subnet_vnet_name: "{{ item.vnet_name }}"
         vm_rg_name: "{{ demo_rg_name }}"
         vm_name: "{{ item.vm_name }}"
         subnet_name: "{{ item.subnet_name }}"

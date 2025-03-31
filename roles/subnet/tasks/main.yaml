@@ -1,7 +1,8 @@
 ---
-- name: Ensure Subnet {{ subnet_name }} is Present
+- name: Ensure Subnet is Present - {{ subnet_name }}
   azure.azcollection.azure_rm_subnet:
     resource_group: "{{ subnet_rg_name }}"
     virtual_network_name: "{{ subnet_vnet_name }}"
     name: "{{ subnet_name }}"
     address_prefix_cidr: "{{ subnet_address_prefix_cidr }}"
+    state: "{{ subnet_state }}"

@@ -1,9 +1,9 @@
 ---
-subnet_rg_name: my_aap_rg
-subnet_vnet_name: my_aap_vnet
-subnet_name: my_aap_subnet
-vm_rg_name: my_aap_rg
-vm_name: my-aap-vm
+subnet_rg_name: rg-my-aap
+subnet_vnet_name: vnet-my-aap
+subnet_name: snet-my-aap
+vm_rg_name: rg-my-aap
+vm_name: vm-my-aap
 vm_size: Standard_B1s
 vm_os_disk_size_gb: 64
 vm_username: demoadmin

@@ -4,12 +4,12 @@
   gather_facts: false
 
   vars:
-    demo_rg_name: aap_demo_rg
-    demo_vnet_name: aap_demo_vnet
-    demo_vm_name: aap-demo-vm1
-    demo_subnet_name: aap_demo_subnet1
+    demo_rg_name: rg-aap-demo
+    demo_vnet_name: vnet-aap-demo
+    demo_vm_name: vm-aap-demo-1
+    demo_subnet_name: snet-aap-demo-1
     demo_vm_size: Standard_B1s
-    dmeo_vm_os_disk_size_gb: 64
+    dmeo_vm_os_disk_size_gb: 128
     demo_vm_state: present
     demo_vm_username: demoadmin
     demo_vm_password: changeme
