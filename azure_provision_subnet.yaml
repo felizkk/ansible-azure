@@ -1,5 +1,5 @@
 ---
-- name: Provision Resource Group
+- name: Provision Subnet
   hosts: localhost
   gather_facts: false
 
