@@ -6,13 +6,19 @@
   vars:
     demo_rg_name: rg-aap-demo
     demo_vnet_name: vnet-aap-demo
-    demo_vm_name: vm-aap-demo-1
-    demo_subnet_name: snet-aap-demo-1
-    demo_vm_size: Standard_B1s
-    dmeo_vm_os_disk_size_gb: 128
-    demo_vm_state: present
+    demo_vm_name: vm-aap-demo
+    demo_subnet_name: snet-aap-demo-core
+    demo_vm_size: Standard_B4as_v2
+    demo_vm_os_disk_size_gb: 160
+    demo_vm_public_ip_name: vm-aap-demo-pip
+    demo_vm_state: absent
     demo_vm_username: demoadmin
     demo_vm_password: changeme
+    demo_vm_image:
+      offer: rhel-raw
+      publisher: RedHat
+      sku: '9_5'
+      version: latest
     demo_tags:
       demo: aap
       guid: zn56b
@@ -29,7 +35,10 @@
         subnet_name: "{{ demo_subnet_name }}"
         vm_state: "{{ demo_vm_state }}"
         vm_size: "{{ demo_vm_size }}"
-        vm_os_disk_size_gb: "{{ dmeo_vm_os_disk_size_gb }}"
+        vm_os_disk_size_gb: "{{ demo_vm_os_disk_size_gb }}"
+        vm_public_ip_name: "{{ demo_vm_public_ip_name }}"
         vm_username: "{{ demo_vm_username }}"
         vm_password: "{{ demo_vm_password }}"
+        vm_image: "{{ demo_vm_image }}"
+        vm_plan: "{{ demo_plan }}"
         vm_tags: "{{ demo_tags }}"
