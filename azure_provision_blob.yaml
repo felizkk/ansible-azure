@@ -1,0 +1,35 @@
+---
+- name: Provision Storage Blob
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    demo_rg_name: rg-aap-demo
+    demo_storage_account_name: staapdemo
+    demo_storage_account_type: Standard_LRS
+    demo_blob_container_name: hubdata
+    demo_blob_state: present
+    demo_tags:
+      demo: aap
+      guid: zn56b
+
+  tasks:
+    # We need to create a unique alphanumericstring for the storage account
+    - name: Generate Random Alphanumeric Atring
+      ansible.builtin.set_fact:
+        random_chars: "{{ lookup('password', '/dev/null length=5 chars=abcdefghijklmnopqrstuvwxyz0123456789') }}"
+
+    - name: Create a Storage Account
+      azure.azcollection.azure_rm_storageaccount:
+        resource_group: "{{ demo_rg_name }}"
+        name: "{{ demo_storage_account_name }}{{ random_chars }}"
+        type: "{{ demo_storage_account_type }}"
+        state: "{{ demo_blob_state }}"
+        tags: "{{ demo_tags }}"
+
+    - name: Create Storage Blob Container
+      azure.azcollection.azure_rm_storageblob:
+        resource_group: "{{ demo_rg_name }}"
+        storage_account_name: "{{ demo_storage_account_name }}{{ random_chars }}"
+        container: "{{ demo_blob_container_name }}"
+        state: "{{ demo_blob_state }}"
