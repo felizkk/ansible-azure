@@ -7,9 +7,11 @@
     demo_rg_name: rg-aap-demo
     demo_subnet_state: present
     demo_subnet_list:
-      - { name: snet-aap-demo-cli, vnet_name: vnet-aap-demo-cli, prefix: 172.16.132.0/24 }
-      - { name: snet-aap-demo-1, vnet_name: vnet-aap-demo, prefix: 172.16.134.0/24 }
-      - { name: snet-aap-demo-2, vnet_name: vnet-aap-demo, prefix: 172.16.135.0/24 }
+      - { name: snet-aap-demo-cli, vnet_name: vnet-aap-demo-cli, prefix: 172.16.132.0/28 }
+      - { name: snet-aap-demo-jumphost, vnet_name: vnet-aap-demo, prefix: 172.16.134.0/28 }
+      - { name: snet-aap-demo-fe, vnet_name: vnet-aap-demo, prefix: 172.16.134.16/28 }
+      - { name: snet-aap-demo-app, vnet_name: vnet-aap-demo, prefix: 172.16.134.32/28 }
+      - { name: snet-aap-demo-db, vnet_name: vnet-aap-demo, prefix: 172.16.134.48/28 }
 
   tasks:
     - name: Process Subnet List

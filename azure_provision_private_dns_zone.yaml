@@ -1,0 +1,31 @@
+---
+- name: Provision Private DNS Zone
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    demo_rg_name: rg-aap-demo
+    demo_zone_name: felizlab.com
+    demo_zone_state: present
+    demo_vnet_name: vnet-aap-demo
+    demo_tags:
+      demo: aap
+      guid: zn56b
+
+  tasks:
+    - name: Create a private DNS Zone - {{ demo_zone_name }}
+      azure.azcollection.azure_rm_privatednszone:
+        resource_group: "{{ demo_rg_name }}"
+        name: "{{ demo_zone_name }}"
+        state: "{{ demo_zone_state }}"
+        tags: "{{ demo_tags }}"
+
+    - name: Create a private DNS Zone VNET Link - {{ demo_zone_name }}
+      azure.azcollection.azure_rm_privatednszonelink:
+        resource_group: "{{ demo_rg_name }}"
+        name: "{{ demo_zone_name }}-link"
+        zone_name: "{{ demo_zone_name }}"
+        virtual_network: "{{ demo_vnet_name }}"
+        registration_enabled: true
+        state: "{{ demo_zone_state }}"
+        tags: "{{ demo_tags }}"
