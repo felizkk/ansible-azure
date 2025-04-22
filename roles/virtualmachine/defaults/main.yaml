@@ -9,6 +9,12 @@ vm_os_disk_size_gb: 64
 vm_username: demoadmin
 vm_password: changeme
 vm_state: present
+vm_public_ip_name: vm-my-aap-pip
+vm_image:
+  offer: rhel-raw
+  publisher: RedHat
+  sku: '9_5'
+  version: latest
 vm_tags:
   mytag1: value1
   mytag2: value2

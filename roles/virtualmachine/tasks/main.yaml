@@ -10,7 +10,7 @@
       - name: "{{ vm_name }}_nic01_ipconfig1"
         primary: true
         private_ip_allocation_method: Dynamic
-        public_ip_address_name: "{{ vm_name }}_public_ip"
+        public_ip_address_name: "{{ vm_public_ip_name | default(omit, '') }}"
   # only do this task on present state
   when: vm_state != "absent"
 
@@ -24,11 +24,7 @@
     network_interfaces: "{{ vm_name }}_nic01"
     state: "{{ vm_state }}"
     os_type: Linux
-    image:
-      offer: RHEL
-      publisher: RedHat
-      sku: '9_5'
-      version: latest
+    image: "{{ vm_image }}"
     os_disk_size_gb: "{{ vm_os_disk_size_gb }}"
     os_disk_name: "{{ vm_name }}_osdisk"
     managed_disk_type: Standard_LRS
