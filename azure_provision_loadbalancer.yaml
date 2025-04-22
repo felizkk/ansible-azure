@@ -1,0 +1,44 @@
+---
+- name: Provision Load Balancer
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    demo_rg_name: rg-aap-demo
+    demo_lb_name: alb-aap-demo
+    demo_lb_public_ip_name: alb-aap-demo-pip
+    demo_lb_state: present
+    demo_tags:
+      demo: aap
+      guid: zn56b
+
+  tasks:
+    - name: Create Load Balancer Public Ip Address
+      azure.azcollection.azure_rm_publicipaddress:
+        resource_group: "{{ demo_rg_name }}"
+        name: "{{ demo_lb_public_ip_name }}"
+        allocation_method: dynamic
+        tags: "{{ demo_tags }}"
+
+    - name: Create Load Balancer
+      azure.azcollection.azure_rm_loadbalancer:
+        resource_group: "{{ demo_rg_name }}"
+        name: "{{ demo_lb_name }}"
+        state: "{{ demo_lb_state }}"
+        tags: "{{ demo_tags }}"
+        frontend_ip_configurations:
+          - name: fe-ipconfig-1
+            public_ip_address: "{{ demo_lb_public_ip_name }}"
+        backend_address_pools:
+          - name: be-pool-1
+        probes:
+          - name: probe-1
+            port: 443
+        load_balancing_rules:
+          - name: lb-rule-1
+            frontend_ip_configuration: fe-ipconfig-1
+            backend_address_pool: be-pool-1
+            frontend_port: 443
+            backend_port: 443
+            probe: probe-1
+            load_distribution: SourceIP
