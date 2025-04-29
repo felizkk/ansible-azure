@@ -214,8 +214,8 @@
               - 8444
               - 8445
               - 8446
-              - 8052
-              - 8080
+              # - 8052
+              # - 8080
             destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
             access: Allow
           - name: Allow-Redis-From-Cluster
@@ -266,8 +266,8 @@
               - 8444
               - 8445
               - 8446
-              - 8052
-              - 8080
+              # - 8052
+              # - 8080
             destination_address_prefix:
               - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
               - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
@@ -369,8 +369,8 @@
               - 8444
               - 8445
               - 8446
-              - 8052
-              - 8080
+              # - 8052
+              # - 8080
             destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
             access: Allow
           - name: Allow-Redis-From-Cluster
@@ -411,8 +411,8 @@
               - 8444
               - 8445
               - 8446
-              - 8052
-              - 8080
+              # - 8052
+              # - 8080
             destination_address_prefix:
               - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
               - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
