@@ -1,64 +1,568 @@
 ---
-- name: Provision Subnet
+- name: Provision Subnet NSG Rules
   hosts: localhost
   gather_facts: false
 
   vars:
     demo_rg_name: rg-aap-demo
-    # demo_subnet_list:
-    #   - { name: snet-aap-demo-cli, vnet_name: vnet-aap-demo-cli, prefix: 172.16.132.0/24 }
-    #   - { name: snet-aap-demo-1, vnet_name: vnet-aap-demo, prefix: 172.16.134.0/24 }
-    #   - { name: snet-aap-demo-2, vnet_name: vnet-aap-demo, prefix: 172.16.135.0/24 }
     # Client source public IP for access
-    demo_office_ip: 121.74.11.91/32
+    # We can get office ip from task
+    # demo_office_ip: 22.33.44.11/32 # 103.247.155.69/32
+    # Customer access to demo environment
+    customer_office_ip: 11.22.33.44/32
+    demo_subnet_list:
+      snet_aap_demo_jumphost:
+        prefix: 172.16.134.0/28
+      snet_aap_demo_fe:
+        prefix: 172.16.134.16/28
+      snet_aap_demo_app:
+        prefix: 172.16.134.32/28
+      snet_aap_demo_db:
+        prefix: 172.16.134.48/28
+    azure_rhui_ip: 52.142.4.99/32
+
+    # NSG Scenarios
+    # Jumphost is in jumphost subnet
+    # Load balancer and Gateway nodes are in frontend subnet
+    # Controller, Hub, EDA nodes are in app subnet
+    # Execution nodes are in app subnet
+    # ACR, DB, Blob, KV resoruces are in db subnet
 
   tasks:
-    - name: Create NSG Rules for snet-aap-demo-cli
+    - name: Get Office Public IP using icanhazip.com
+      ansible.builtin.uri:
+        url: https://icanhazip.com
+        return_content: true
+        status_code: 200
+      register: public_ip_result
+
+    - name: Set Office Public IP
+      ansible.builtin.set_fact:
+        demo_office_ip: "{{ public_ip_result.content | split('\n') | first }}"
+
+    - name: Create NSG Rules for snet-aap-demo-jumphost
       azure.azcollection.azure_rm_securitygroup:
         resource_group: "{{ demo_rg_name }}"
-        name: "nsg-snet-aap-demo-cli"
+        name: "nsg-snet-aap-demo-jumphost"
         # not to remove rules not matching those defined in rules
         purge_rules: false
         rules:
           # Inbound Rules
-          - name: Allow-SSH-Office
+          # Allow Office to SSH in to Jumphost over Public IP
+          - name: Allow-SSH-From-Office
             description: Allow SSH Inbound from Office
             direction: Inbound
             priority: 1001
             protocol: "TCP"
             source_port_range: "*"
-            source_address_prefix: 121.74.11.91/32
+            source_address_prefix: "{{ demo_office_ip }}"
             destination_port_range: 22
-            destination_address_prefix: 172.16.132.0/24
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
             access: Allow
+          # - name: Allow-SSH-From-App-DemoOnly
+          #   description: Allow SSH Inbound from Office for rhel-automation Demo
+          #   direction: Inbound
+          #   priority: 3001
+          #   protocol: "TCP"
+          #   source_port_range: "*"
+          #   source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+          #   destination_port_range: 22
+          #   destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+          #   access: Allow
           # Outbound Rules
-          - name: Allow-SSH-Demo
-            description: Allow SSH Outbound to Demo VNET
+          - name: Allow-SSH-To-Fe
+            description: Allow SSH Outbound to FrontEnd for Installation
             direction: Outbound
             priority: 1001
             protocol: "TCP"
             source_port_range: "*"
-            source_address_prefix: 172.16.132.0/24
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
             destination_port_range: 22
-            destination_address_prefix: 172.16.134.0/24
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
             access: Allow
+          - name: Allow-SSH-To-App
+            description: Allow SSH Outbound to App for Installation
+            direction: Outbound
+            priority: 1002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 22
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-PgSQL-To-DB
+            description: Allow PgSQL Outbound to DB
+            direction: Outbound
+            priority: 1003
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 5432
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-Https-To-Fe
+            description: Allow Https Outbound to FrontEnd for Web Access
+            direction: Outbound
+            priority: 2001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            access: Allow
+          - name: Allow-Https-To-App
+            description: Allow Https Outbound to App for Hub image push (initial images)
+            direction: Outbound
+            priority: 2002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-Https-To-Db
+            description: Allow Https Outbound to DB (ACR) for ACR image push
+            direction: Outbound
+            priority: 2003
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-Https-To-RHUI
+            description: Allow Https Outbound to RHUI for RHEL Update
+            direction: Outbound
+            priority: 3001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ azure_rhui_ip }}"
+            access: Allow
+          # - name: Allow-Https-To-Internet-DemoOnly
+          #   description: Allow Https Outbound to Internet for Downloads
+          #   direction: Outbound
+          #   priority: 3002
+          #   protocol: "*"
+          #   source_port_range: "*"
+          #   source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+          #   destination_port_range: "*"
+          #   destination_address_prefix: "Internet"
+          #   access: Allow
 
-    - name: Create NSG Rules for snet-aap-demo-1
+    - name: Create NSG Rules for snet-aap-demo-fe
       azure.azcollection.azure_rm_securitygroup:
         resource_group: "{{ demo_rg_name }}"
-        name: "nsg-snet-aap-demo-1"
+        name: "nsg-snet-aap-demo-fe"
         # not to remove rules not matching those defined in rules
         purge_rules: false
         rules:
           # Inbound Rules
-          - name: Allow-SSH-CLI
-            description: Allow SSH Inbound from CLI Jumphost
+          - name: Allow-SSH-From-Jumphost
+            description: Allow SSH Inbound from Jumphost for Installation
             direction: Inbound
             priority: 1001
             protocol: "TCP"
             source_port_range: "*"
-            source_address_prefix: 172.16.132.0/24
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
             destination_port_range: 22
-            destination_address_prefix: 172.16.134.0/24
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            access: Allow
+          - name: Allow-Https-From-Jumphost
+            description: Allow Https Inbound from Jumphost for Web Access
+            direction: Inbound
+            priority: 1002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            access: Allow
+          - name: Allow-Https-From-Office
+            description: Allow Https Inbound from Office for Web Access
+            direction: Inbound
+            priority: 1003
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_office_ip }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            access: Allow
+          - name: Allow-Https-From-Customer
+            description: Allow Https Inbound from Customer for Web Access
+            direction: Inbound
+            priority: 1004
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ customer_office_ip }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            access: Allow
+          - name: Allow-Https-From-Cluster
+            description: Allow Https Inbound from AAP Cluster
+            direction: Inbound
+            priority: 1005
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix:
+              - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+              - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range:
+              - 443
+              - 8443
+              - 8444
+              - 8445
+              - 8446
+              - 8052
+              - 8080
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            access: Allow
+          - name: Allow-Redis-From-Cluster
+            description: Allow Redis Inbound from AAP Cluster
+            direction: Inbound
+            priority: 2001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: 
+              - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+              - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range:
+              - 6379
+              - 16379
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            access: Allow
+          - name: Allow-GrPC-From-Gateway
+            description: Allow GrPC Inbound from Gateway to Gateway
+            direction: Inbound
+            priority: 2002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            destination_port_range: 50051
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            access: Allow
+          # - name: Allow-SSH-From-App-DemoOnly
+          #   description: Allow SSH Inbound from Office for rhel-automation Demo
+          #   direction: Inbound
+          #   priority: 3001
+          #   protocol: "TCP"
+          #   source_port_range: "*"
+          #   source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+          #   destination_port_range: 22
+          #   destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+          #   access: Allow
+          # Outbound Rules
+          - name: Allow-Https-To-Cluster
+            description: Allow Https Outbound to AAP Cluster
+            direction: Outbound
+            priority: 1001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            destination_port_range:
+              - 443
+              - 8443
+              - 8444
+              - 8445
+              - 8446
+              - 8052
+              - 8080
+            destination_address_prefix:
+              - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+              - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-PgSQL-To-DB
+            description: Allow PgSQL Outbound from Gateway to DB
+            direction: Outbound
+            priority: 1002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            destination_port_range: 5432
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-Https-To-Blob
+            description: Allow Https Outbound to Blob Storage Accout
+            direction: Outbound
+            priority: 1003
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-Redis-To-Cluster
+            description: Allow Redis Outbound To Cluster
+            direction: Outbound
+            priority: 2001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            destination_port_range:
+              - 6379 # {"changed": false, "msg": "Please check the network and firewall configuration (6379/16379)"}
+              - 16379
+            destination_address_prefix: 
+              - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+              - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-GrPC-To-Gateway
+            description: Allow GrPC Outbound from Gateway to Gateway
+            direction: Outbound
+            priority: 2002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            destination_port_range: 50051
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            access: Allow
+          - name: Allow-Https-To-RHUI-DemoOnly
+            description: Allow Https Outbound to RHUI for RHEL Update
+            direction: Outbound
+            priority: 3001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ azure_rhui_ip }}"
+            access: Allow
+
+    - name: Create NSG Rules for snet-aap-demo-app
+      azure.azcollection.azure_rm_securitygroup:
+        resource_group: "{{ demo_rg_name }}"
+        name: "nsg-snet-aap-demo-app"
+        # not to remove rules not matching those defined in rules
+        purge_rules: false
+        rules:
+          - name: Allow-SSH-From-Jumphost
+            description: Allow SSH Inbound from Jumphost for Installation
+            direction: Inbound
+            priority: 1001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 22
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-Https-From-Jumphost
+            description: Allow Https Inbound from Jumphost for Hub image push (initial images)
+            direction: Inbound
+            priority: 1002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-Https-From-Cluster
+            description: Allow Https Inbound from AAP Cluster
+            direction: Inbound
+            priority: 1003
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix:
+              - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+              - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range:
+              - 443
+              - 8443
+              - 8444
+              - 8445
+              - 8446
+              - 8052
+              - 8080
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-Redis-From-Cluster
+            description: Allow Redis Inbound from AAP Cluster
+            direction: Inbound
+            priority: 2001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix:
+              - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+              - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range:
+              - 6379
+              - 16379
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-Receptor-From-App
+            description: Allow Receptor Inbound from Execution Nodes To Controller (bi-directional)
+            direction: Inbound
+            priority: 2002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range: 21799
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          # Outbound Rules
+          - name: Allow-Https-To-Cluster
+            description: Allow Https Outbound to AAP Cluster 
+            direction: Outbound
+            priority: 1001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range:
+              - 443
+              - 8443
+              - 8444
+              - 8445
+              - 8446
+              - 8052
+              - 8080
+            destination_address_prefix:
+              - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+              - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-Https-To-DB
+            description: Allow Https Outbound to DB for KV, ACR, and Blob communications
+            direction: Outbound
+            priority: 1002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range:
+              - 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-PgSQL-To-DB
+            description: Allow PgSQL Outbound from App to DB
+            direction: Outbound
+            priority: 1003
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range: 5432
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-Https-To-Blob
+            description: Allow Https Outbound to Blob Storage Accout
+            direction: Outbound
+            priority: 1004
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-Redis-To-Cluster
+            description: Allow Redis Outbound to AAP Cluster
+            direction: Outbound
+            priority: 2001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range:
+              - 6379 # This is needed? {"changed": false, "msg": "Please check the network and firewall configuration (6379/16379)"}
+              - 16379
+            destination_address_prefix:
+              - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+              - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          - name: Allow-Receptor-To-App
+            description: Allow Receptor Outbound from Controller to Execution nodes (bi-directional)
+            direction: Outbound
+            priority: 2002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range: 21799
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            access: Allow
+          # For Demo Job Template (not installation), Allow Internet
+          - name: Allow-Https-To-RHUI-DemoOnly
+            description: Allow Https Outbound to RHUI for RHEL Update
+            direction: Outbound
+            priority: 3001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ azure_rhui_ip }}"
+            access: Allow
+          # - name: Allow-Https-To-Internet-DemoOnly
+          #   description: Allow Https Outbound to Internet for Git Project
+          #   direction: Outbound
+          #   priority: 3002
+          #   protocol: "*"
+          #   source_port_range: "*"
+          #   source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+          #   destination_port_range: "*"
+          #   destination_address_prefix: "Internet"
+          #   access: Allow
+          # - name: Allow-SSH-To-All-DemoOnly
+          #   description: Allow SSH Outbound to All VMs for rhel-automation
+          #   direction: Outbound
+          #   priority: 3003
+          #   protocol: "*"
+          #   source_port_range: "*"
+          #   source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+          #   destination_port_range: "22"
+          #   destination_address_prefix:
+          #     - "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+          #     - "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+          #     - "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+          #   access: Allow
+
+    - name: Create NSG Rules for snet-aap-demo-db
+      azure.azcollection.azure_rm_securitygroup:
+        resource_group: "{{ demo_rg_name }}"
+        name: "nsg-snet-aap-demo-db"
+        # not to remove rules not matching those defined in rules
+        purge_rules: false
+        rules:
+          # Inbound Rules
+          - name: Allow-PgSQL-From-App
+            description: Allow PgSQL Inbound from Controller, Eda, Hub
+            direction: Inbound
+            priority: 1001
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range: 5432
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-PgSQL-From-Fe
+            description: Allow PgSQL Inbound from Gateway
+            direction: Inbound
+            priority: 1002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_fe.prefix }}"
+            destination_port_range: 5432
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-PgSQL-From-Jumphost
+            description: Allow PgSQL Inbound from Jumphost for Initial DB Configuration
+            direction: Inbound
+            priority: 1003
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 5432
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-Https-From-App
+            description: Allow Https Inbound from Controller, Eda, Hub for ACR, KV, Blob Access
+            direction: Inbound
+            priority: 1004
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_app.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
+            access: Allow
+          - name: Allow-Https-From-Jumphost
+            description: Allow Https Inbound from Jumphost for ACR image push
+            direction: Inbound
+            priority: 2002
+            protocol: "TCP"
+            source_port_range: "*"
+            source_address_prefix: "{{ demo_subnet_list.snet_aap_demo_jumphost.prefix }}"
+            destination_port_range: 443
+            destination_address_prefix: "{{ demo_subnet_list.snet_aap_demo_db.prefix }}"
             access: Allow
           # Outbound Rules

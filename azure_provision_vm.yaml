@@ -6,10 +6,34 @@
   vars:
     demo_rg_name: rg-aap-demo
     demo_vm_list:
+      # - { vm_name: aap-jumphost-cli, vnet_name: vnet-aap-demo-cli, subnet_name: snet-aap-demo-cli,
+      #     vm_size: Standard_B4as_v2, vm_os_disk_size_gb: 64, vm_public_ip_name: aap-jumphost-cli-pip }
       - { vm_name: aap-jumphost, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-jumphost,
-          vm_size: Standard_B4as_v2, vm_os_disk_size_gb: 64, vm_public_ip_name: aap-jumphost-pip }
-      - { vm_name: vm-aap-demo-core, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-core,
-          vm_size: Standard_B4ms, vm_os_disk_size_gb: 160 }
+          vm_size: Standard_B4ms, vm_os_disk_size_gb: 64, vm_public_ip_name: aap-jumphost-pip }
+      # Single All-in-One AAP VM
+      # - { vm_name: aap-demo, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-app,
+      #     vm_size: Standard_B4as_v2, vm_os_disk_size_gb: 120 }
+      # Below are for Enterprise AAP VM
+      - { vm_name: aap-gateway-host1, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-fe,
+          vm_size: Standard_D4s_v4, vm_os_disk_size_gb: 64, vm_public_ip_name: aap-gateway-host1-pip } # Standard_B4ms
+      - { vm_name: aap-gateway-host2, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-fe,
+          vm_size: Standard_D4s_v4, vm_os_disk_size_gb: 64, vm_public_ip_name: aap-gateway-host2-pip }
+      - { vm_name: aap-controller-host1, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-app,
+          vm_size: Standard_D4s_v5, vm_os_disk_size_gb: 64 } # Standard_B4s_v2
+      - { vm_name: aap-controller-host2, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-app,
+          vm_size: Standard_D4s_v5, vm_os_disk_size_gb: 64 }
+      - { vm_name: aap-eda-host1, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-app,
+          vm_size: Standard_D4as_v4, vm_os_disk_size_gb: 64 }
+      - { vm_name: aap-eda-host2, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-app,
+          vm_size: Standard_D4as_v4, vm_os_disk_size_gb: 64 }
+      - { vm_name: aap-hub-host1, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-app,
+          vm_size: Standard_D4as_v5, vm_os_disk_size_gb: 64 }
+      - { vm_name: aap-hub-host2, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-app,
+          vm_size: Standard_D4as_v5, vm_os_disk_size_gb: 64 }
+      - { vm_name: aap-execution-host1, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-app,
+          vm_size: Standard_D4ads_v5, vm_os_disk_size_gb: 64 }
+      - { vm_name: aap-execution-host2, vnet_name: vnet-aap-demo, subnet_name: snet-aap-demo-app,
+          vm_size: Standard_D4ads_v5, vm_os_disk_size_gb: 64 }
     demo_vm_state: present
     demo_vm_username: demoadmin
     demo_vm_password: changeme
