@@ -29,3 +29,13 @@
         registration_enabled: true
         state: "{{ demo_zone_state }}"
         tags: "{{ demo_tags }}"
+
+    - name: Create a private DNS Zone VNET Link CLI - {{ demo_zone_name }}
+      azure.azcollection.azure_rm_privatednszonelink:
+        resource_group: "{{ demo_rg_name }}"
+        name: "{{ demo_zone_name }}-cli-link"
+        zone_name: "{{ demo_zone_name }}"
+        virtual_network: "{{ demo_vnet_name }}-cli"
+        registration_enabled: true
+        state: "{{ demo_zone_state }}"
+        tags: "{{ demo_tags }}"

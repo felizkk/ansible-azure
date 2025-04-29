@@ -10,7 +10,7 @@
     #   - { name: snet-aap-demo-1, vnet_name: vnet-aap-demo, prefix: 172.16.134.0/24 }
     #   - { name: snet-aap-demo-2, vnet_name: vnet-aap-demo, prefix: 172.16.135.0/24 }
     # Client source public IP for access
-    demo_office_ip: 121.74.11.91/32
+    demo_office_ip: 22.22.22.22/32
 
   tasks:
     - name: Create NSG Rules for snet-aap-demo-cli
